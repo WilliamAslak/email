@@ -32,14 +32,21 @@ public class SMTPConnection {
         toServer =   new DataOutputStream(connection.getOutputStream());
 
         /* Fill in */
-        String lineFromServer = fromServer.readLine();
-	/* Read a line from server and check that the reply code is 220.
+	    /* Read a line from server and check that the reply code is 220.
 	   If not, throw an IOException. */
-        /* Fill in */
-        if (!lineFromServer.startsWith("220"))
-        {
-            throw new IOException("220 no reply from server.");
+
+        String serverResponse = fromServer.readLine();
+        if (parseReply(serverResponse) != 220) {
+            System.out.println(envelope.toString());
+            throw new IOException("Unexpected response from server " + serverResponse);
+        } else {
+            parseReply(serverResponse);
         }
+        /* Fill in */
+
+
+
+
 	/* SMTP handshake. We need the name of the local machine.
 	   Send the appropriate SMTP handshake command. */
         String localhost = InetAddress.getLocalHost().getHostName();
@@ -53,15 +60,27 @@ public class SMTPConnection {
        caller. */
     public void send(Envelope envelope) throws IOException {
         /* Fill in */
-	/* Send all the necessary commands to send a message. Call
-	   sendCommand() to do the dirty work. Do _not_ catch the
-	   exception thrown from sendCommand(). */
-        /* Fill in */
+        /* Send MAIL FROM command */
+
+
+        String sender = "MAIL FROM:<" + envelope.Sender + ">";
+        sendCommand(sender, 250);
+
+        /* Send RCPT TO command for each recipient */
+        String recipient = "RCPT TO:<" + envelope.Recipient + ">";
+        sendCommand(recipient, 250);
+
+        /* Send DATA command */
+        sendCommand("DATA", 354);
+
+        /* Send message headers and body */
+        sendCommand(envelope.Message.toString() + CRLF + ".", 250);
     }
 
     /* Close the connection. First, terminate on SMTP level, then
        close the socket. */
     public void close() {
+
         isConnected = false;
         try {
             sendCommand("QUIT",221);
@@ -92,7 +111,10 @@ public class SMTPConnection {
 
     /* Parse the reply line from the server. Returns the reply code. */
     private int parseReply(String reply) {
-        /* Fill in */
+        if (reply != null) {
+            return Integer.parseInt(reply.substring(0,3));
+        }
+        return -1;
     }
 
     /* Destructor. Closes the connection if something bad happens. */
