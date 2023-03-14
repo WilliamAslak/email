@@ -14,7 +14,7 @@ public class SMTPConnection {
     private BufferedReader fromServer;
     private DataOutputStream toServer;
 
-    private static final int SMTP_PORT = 25;
+    private static final int SMTP_PORT = 2526;
     private static final String CRLF = "\r\n";
 
     /* Are we connected? Used in close() to determine what to do. */
@@ -63,8 +63,8 @@ public class SMTPConnection {
     public void close() {
         isConnected = false;
         try {
-            sendCommand( /* Fill in */ );
-            // connection.close();
+            sendCommand("QUIT",221);
+            connection.close();
         } catch (IOException e) {
             System.out.println("Unable to close connection: " + e);
             isConnected = true;
@@ -74,15 +74,19 @@ public class SMTPConnection {
     /* Send an SMTP command to the server. Check that the reply code is
        what is is supposed to be according to RFC 821. */
     private void sendCommand(String command, int rc) throws IOException {
-        /* Fill in */
 
+        /* Fill in */
         /* Write command to server and read reply from server. */
-        /* Fill in */
+        toServer.writeBytes(command + CRLF);
+        String response = fromServer.readLine();
+        System.out.println(response);
+        if (parseReply(response) != rc) {
+            throw new IOException("Unexpected response from server " + response);
+        }
+
 
         /* Fill in */
-	/* Check that the server's reply code is the same as the parameter
-	   rc. If not, throw an IOException. */
-        /* Fill in */
+
     }
 
     /* Parse the reply line from the server. Returns the reply code. */
