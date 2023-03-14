@@ -25,7 +25,7 @@ public class SMTPConnection {
        associated streams. Initialize SMTP connection. */
     public SMTPConnection(Envelope envelope) throws IOException {
         /* Fill in */;
-        connection = new Socket("datacomm.bhsi.xyz", 2526);
+        connection = new Socket(envelope.DestHost, SMTP_PORT);
         /* Fill in */;
         fromServer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         /* Fill in */;
