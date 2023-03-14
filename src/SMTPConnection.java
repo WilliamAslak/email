@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -41,8 +42,8 @@ public class SMTPConnection {
         }
 	/* SMTP handshake. We need the name of the local machine.
 	   Send the appropriate SMTP handshake command. */
-        String localhost = /* Fill in */;
-        sendCommand( /* Fill in */ );
+        String localhost = InetAddress.getLocalHost().getHostName();
+        sendCommand("HELO " + localhost, 250);
 
         isConnected = true;
     }
